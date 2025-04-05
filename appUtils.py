@@ -1,7 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 
-
 def get_db_connection():
     """Establish a connection to the SQLite database."""
     conn = sqlite3.connect('database.db')
@@ -18,7 +17,6 @@ def validate_user(email, password):
         return user  # Return user data if password matches
     return None
 
-
 def signup_user(full_name, email, password, role):
     """Insert a new user into the database and handle duplicates."""
     conn = get_db_connection()
@@ -34,4 +32,12 @@ def signup_user(full_name, email, password, role):
         return False
     finally:
         conn.close()
+
+def get_restaurants():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Restaurants JOIN Reviews ON Restaurants.RestaurantID = Reviews.RestaurantID")
+    restaurants = cursor.fetchall()  # returns a list of all rows in the table
+    conn.close()
+    return restaurants # Return the list of restaurants
 

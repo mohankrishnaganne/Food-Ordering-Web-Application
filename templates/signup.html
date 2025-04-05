@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Food Order</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+        background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092') no-repeat center center/cover;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    </style>
 </head>
 <body>
     <div class="signup-container">
@@ -32,7 +42,7 @@
                 </select>
             </div>
             <button type="submit">Sign Up</button>
-            <p class="login-link">Already have an account? <a href="/signin">Login</a></p>
+            <p class="login-link">Already have an account? <a href="/signin">Sign In</a></p>
         </form>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>

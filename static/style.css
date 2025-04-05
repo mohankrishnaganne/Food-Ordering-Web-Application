@@ -1,81 +1,22 @@
 body {
-    font-family: Arial, sans-serif;
-    background-image: url('https://source.unsplash.com/1600x900/?food'); /* Food Background */
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-container, .signup-container {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
 }
 
 .login-container {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
     width: 300px;
 }
 
-h2 {
-    margin-bottom: 20px;
-}
-
-.input-group {
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-label {
-    font-weight: bold;
-    display: block;
-}
-
-input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #ff5733;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button:hover {
-    background-color: #e04e20;
-}
-
-.register-link {
-    margin-top: 10px;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-image: url('https://source.unsplash.com/1600x900/?food'); /* Food-themed background */
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
 .signup-container {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
     width: 350px;
 }
 
@@ -116,6 +57,97 @@ button:hover {
     background-color: #e04e20;
 }
 
-.login-link {
+.register-link, .login-link {
     margin-top: 10px;
+}
+
+/* New styles added */
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.2em;
+    margin-bottom: 40px;
+}
+
+.btn {
+    padding: 15px 30px;
+    margin: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.signin {
+    background-color: #ff7f50;
+    color: white;
+}
+
+.signin:hover {
+    background-color: #ff6347;
+}
+
+.signup {
+    background-color: white;
+    color: #ff7f50;
+}
+
+.signup:hover {
+    background-color: #f1f1f1;
+}
+
+
+.restaurant-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.restaurant-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-5px);
+}
+
+.restaurant-name {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin-bottom: 10px;
+}
+
+.restaurant-info {
+    margin: 5px 0;
+    color: #555;
+}
+
+.rating {
+    font-weight: bold;
+    color: #f9a825;
 }

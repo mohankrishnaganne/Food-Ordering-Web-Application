@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ restaurant['name'] }} - Menu</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 40px;
+        }
+
+        .menu-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .menu-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .menu-item h2 {
+            margin: 0 0 10px;
+            color: #333;
+        }
+
+        .menu-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .menu-item .price {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        a.back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a.back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="{{ url_for('restaurants') }}" class="back-link">&larr; Back to Restaurants</a>
+    <h1>{{ restaurant['name'] }} - Menu</h1>
+
+    <div class="menu-container">
+        {% for item in menu_items %}
+            <div class="menu-item">
+                <h2>{{ item['name'] }}</h2>
+                <p>{{ item['description'] }}</p>
+                <p class="price">$ {{ item['price'] }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

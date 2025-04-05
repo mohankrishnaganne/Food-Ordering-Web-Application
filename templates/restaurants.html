@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant Listings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Available Restaurants</h1>
+
+    <div class="restaurant-container">
+        {% for restaurant in restaurants %}
+            <div class="restaurant-card">
+                <div class="restaurant-name">{{ restaurant['name'] }}</div>
+                <div class="restaurant-info">📍 Address: {{ restaurant['address'] }}</div>
+                <div class="restaurant-info">📞 Phone: {{ restaurant['PhoneNumber'] }}</div>
+                <div class="restaurant-info">🕒 Hours: {{ restaurant['openinghours'] }}</div>
+                <div class="restaurant-info rating">⭐ Rating: {{ restaurant['rating'] }}/5</div>
+                <a href="{{ url_for('show_menu', restaurant_id=restaurant['restaurantid']) }}">View Menu</a>
+
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
