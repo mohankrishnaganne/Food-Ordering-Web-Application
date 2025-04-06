@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ restaurant['name'] }} - Menu</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        .navbar {
+            margin-bottom: 20px;
+        }
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 30px;
         }
 
         h1 {
@@ -45,6 +48,23 @@
             color: #4CAF50;
         }
 
+        .btn-add-to-cart {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 16px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .btn-add-to-cart:hover {
+            background-color: #45a049;
+        }
+
         a.back-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -55,22 +75,77 @@
         a.back-link:hover {
             text-decoration: underline;
         }
+
+        .show-cart-link {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 18px;
+            color: #007BFF;
+        }
+
+        .show-cart-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
-    <a href="{{ url_for('restaurants') }}" class="back-link">&larr; Back to Restaurants</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('my_orders') }}">View Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if session.get('UserID') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('signin') }}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
     <h1>{{ restaurant['name'] }} - Menu</h1>
 
     <div class="menu-container">
         {% for item in menu_items %}
             <div class="menu-item">
-                <h2>{{ item['name'] }}</h2>
+                <h2>{{ item['ItemName'] }}</h2>
                 <p>{{ item['description'] }}</p>
                 <p class="price">$ {{ item['price'] }}</p>
+                
+                <!-- Add to Cart Form -->
+                <form action="{{ url_for('add_to_cart', menu_item_id=item['MenuItemID']) }}" method="POST">
+                    <label for="quantity-{{ item['MenuItemID'] }}">Quantity:</label>
+                    <input type="number" id="quantity-{{ item['MenuItemID'] }}" name="quantity" min="1" value="1" required>
+                    <button type="submit" class="btn-add-to-cart">Add to Cart</button>
+                </form>
             </div>
         {% endfor %}
     </div>
+
+    <a href="{{ url_for('cart') }}" class="show-cart-link">View Cart</a>
 
 </body>
 </html>

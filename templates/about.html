@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome User</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .about-section {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-section h1,
+        .about-section h2 {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .features-icon {
+            font-size: 2.5rem;
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background-color: #e9f9ee;
+            border-left: 5px solid #2e7d32;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .cta-section {
+            background-color: #2e7d32;
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .cta-section a {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('my_orders') }}">View Orders</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if session.get('UserID') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('signin') }}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+
+        <!-- Main About Section -->
+        <div class="about-section">
+            <h1 class="text-center">Welcome to Foodie 🍽️</h1>
+            <p class="text-center mb-5">Your gateway to delicious moments. Discover, order, and enjoy food like never before.</p>
+    
+            
+            <!-- Browse Button -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('restaurants') }}" class="btn btn-dark btn-lg">🍕 Browse Restaurants</a>
+            </div>
+
+            <hr class="my-5">
+
+
+            <h2 class="text-center mb-4">What is Foodie?</h2>
+            <p class="text-center">Foodie is your favorite food delivery app — connecting hungry hearts to local favorites. Whether it’s a late-night craving or a weekend treat, Foodie delivers happiness at your doorstep.</p>
+    
+            <!-- Highlight Box -->
+            <div class="highlight mt-4">
+                <strong>Did you know?</strong> We've served over <strong>10,000</strong> happy customers across multiple cities!
+            </div>
+    
+            <hr class="my-5">
+    
+            <!-- Features Section -->
+            <h2 class="text-center mb-4">What Makes Foodie Special?</h2>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="features-icon">📋</div>
+                    <h5>Browse Menus</h5>
+                    <p>Explore from a variety of cuisines and dishes from your local favorites.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="features-icon">🛒</div>
+                    <h5>Easy Cart</h5>
+                    <p>Manage your orders in a simple and organized way. Update items anytime.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="features-icon">🚀</div>
+                    <h5>Fast Checkout</h5>
+                    <p>Place your order within seconds. Fast, reliable, and secure.</p>
+                </div>
+            </div>
+    
+            <div class="row text-center mt-4">
+                <div class="col-md-4 mb-4">
+                    <div class="features-icon">🔐</div>
+                    <h5>Secure Login</h5>
+                    <p>Your data is safe with us. We value your privacy and security.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="features-icon">👨‍🍳</div>
+                    <h5>Top-rated Restaurants</h5>
+                    <p>Partnered with only the best-rated restaurants for a quality experience.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="features-icon">📦</div>
+                    <h5>Track Orders</h5>
+                    <p>Know when your food is getting prepared and on the way!</p>
+                </div>
+            </div>
+    
+            <hr class="my-5">
+    
+            <!-- Mission Statement -->
+            <h2 class="text-center mb-4">Our Mission</h2>
+            <p class="text-center">We aim to deliver happiness, one bite at a time. At Foodie, it's more than just food – it's an experience. Easy ordering, fast delivery, and unmatched taste.</p>
+        </div>
+    
+        <!-- CTA at Bottom -->
+        <div class="cta-section">
+            <h4 class="mb-3">Craving something delicious?</h4>
+            <a href="{{ url_for('restaurants') }}" class="btn btn-light btn-lg">🍕 Browse Restaurants</a>
+        </div>
+    
+    </div>
+</body>
+
+</html>

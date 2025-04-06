@@ -1,28 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Restaurant Listings</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Order Summary</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .navbar {
             margin-bottom: 20px;
         }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
+        .container {
+            background: white;
+            padding: 20px;
+            max-width: 700px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
         }
 
-        h1 {
+        h2 {
             text-align: center;
-            color: #333;
-            margin-bottom: 40px;
+            color: #4CAF50;
         }
-        
+
+        .order-info,
+        .item {
+            margin-bottom: 20px;
+        }
+
+        .item {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .item p {
+            margin: 5px 0;
+        }
+
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+            text-align: right;
+        }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
@@ -32,6 +54,9 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
                 </li>
@@ -55,20 +80,24 @@
             </ul>
         </div>
     </nav>
-    <h1>Available Restaurants</h1>
-
-    <div class="restaurant-container">
-        {% for restaurant in restaurants %}
-            <div class="restaurant-card">
-                <div class="restaurant-name">{{ restaurant['name'] }}</div>
-                <div class="restaurant-info">📍 Address: {{ restaurant['address'] }}</div>
-                <div class="restaurant-info">📞 Phone: {{ restaurant['PhoneNumber'] }}</div>
-                <div class="restaurant-info">🕒 Hours: {{ restaurant['openinghours'] }}</div>
-                <div class="restaurant-info rating">⭐ Rating: {{ restaurant['rating'] }}/5</div>
-                <a href="{{ url_for('show_menu', restaurant_id=restaurant['restaurantid']) }}">View Menu</a>
-
-            </div>
+    <div class="container">
+        <h2>Order Summary</h2>
+        <div class="order-info">
+            <p><strong>Order ID:</strong> {{ order['OrderID'] }}</p>
+            <p><strong>Restaurant:</strong> {{ order['RestaurantName'] }}</p>
+            <p><strong>Order Date:</strong> {{ order['OrderDate'] }}</p>
+        </div>
+        {% for item in items %}
+        <div class="item">
+            <p><strong>{{ item['ItemName'] }}</strong></p>
+            <p>Quantity: {{ item['Quantity'] }}</p>
+            <p>Subtotal: ${{ item['SubTotal'] }}</p>
+        </div>
         {% endfor %}
+        <div class="total">
+            Total: ${{ order['TotalPrice'] }}
+        </div>
     </div>
 </body>
+
 </html>

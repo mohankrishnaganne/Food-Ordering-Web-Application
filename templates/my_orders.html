@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .navbar {
+            margin-bottom: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #2c7a7b;
+            margin-bottom: 30px;
+        }
+        .order-list {
+            max-width: 800px;
+            margin: auto;
+        }
+        .order-card {
+            background: #d7d3d3;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .order-card p {
+            margin: 5px 0;
+        }
+        .order-card a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .order-card a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if session.get('UserID') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('signin') }}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <h2>My Orders</h2>
+    <div class="order-list">
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order-card">
+                    <p><strong>Order ID:</strong> {{ order['OrderID'] }}</p>
+                    <p><strong>Restaurant:</strong> {{ order['RestaurantName'] }}</p>
+                    <p><strong>Date:</strong> {{ order['OrderDate'] }}</p>
+                    <p><strong>Status:</strong> {{ order['OrderStatus'] }}</p>
+                    <p><strong>Total:</strong> ${{ order['TotalPrice'] }}</p>
+                    <p><a href="{{ url_for('order_summary', order_id=order['OrderID']) }}">View Details</a></p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center;">You haven't placed any orders yet.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
