@@ -98,6 +98,11 @@
             Total: ${{ order['TotalPrice'] }}
         </div>
     </div>
+    <hr class="my-3">
+    <div class="text-center">
+        <a href="{{ url_for('my_orders') }}" class="btn btn-primary">View All Orders</a>
+        <a href="{{ url_for('restaurants') }}" class="btn btn-primary">Browse Restaurants</a>
+    </div>
 </body>
 
 </html>

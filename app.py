@@ -186,7 +186,7 @@ def place_order():
     cursor.execute("""
         INSERT INTO Orders (UserID, RestaurantID, OrderStatus, TotalPrice) 
         VALUES (?, ?, ?, ?)
-    """, (user_id, restaurant_id, 'Pending', total_price))
+    """, (user_id, restaurant_id, 'Delivered', total_price))
     conn.commit()
     
     # Get the last inserted OrderID
