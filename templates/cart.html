@@ -90,7 +90,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <div class="container cart-container">
-        <h1 class="text-center">Your Cart</h1>
+        <h1 class="text-center"><b>Your Cart</b></h1>
 
         {% if cart_items %}
         <div class="row">
@@ -127,7 +127,7 @@
         </div>
         {% else %}
         <div class="text-center">
-            <p>Your cart is empty.</p>
+            <h5>Cart is empty.</h5>
             <a href="{{ url_for('restaurants') }}" class="btn btn-primary">Browse Restaurants</a>
         </div>
         {% endif %}
