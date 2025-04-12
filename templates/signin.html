@@ -14,6 +14,12 @@
         justify-content: center;
         color: white;
     }
+    .error {
+    color: red;
+    }
+    .success {
+    color: green;
+    }
     </style>
 </head>
 <body>
@@ -29,6 +35,15 @@
                 <input type="password" id="password" name="password" required>
             </div>
             <button type="submit">Login</button>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flashes">
+                        {% for category, message in messages %}
+                            <b><li class="{{ category }}">{{ message }}</li></b>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
             <p class="register-link">Don't have an account? <a href="/signup">Sign up</a></p>
         </form>
     </div>

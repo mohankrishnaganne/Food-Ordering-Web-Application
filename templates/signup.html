@@ -14,6 +14,12 @@
         justify-content: center;
         color: white;
     }
+    .error {
+    color: red;
+    }
+    .success {
+    color: green;
+    }
     </style>
 </head>
 <body>
@@ -42,6 +48,15 @@
                 </select>
             </div>
             <button type="submit">Sign Up</button>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
             <p class="login-link">Already have an account? <a href="/signin">Sign In</a></p>
         </form>
     </div>

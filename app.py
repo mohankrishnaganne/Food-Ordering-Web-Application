@@ -11,7 +11,6 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'UserID' not in session:
-            flash("You need to be logged in to access this page.", "error")
             return redirect(url_for('signin'))
         return f(*args, **kwargs)
     return decorated_function
@@ -38,9 +37,10 @@ def signin():
 
         if user:
             session['UserID'] = user[0]  # Assuming user[0] is UserID
-            session['Role'] = user[4]     # Optional: to store role
-            return redirect(url_for('restaurants'))
+            session['Role'] = user[4]    # Optional: to store role
+            return redirect(url_for('about'))
         else:
+            flash("Invalid email or password. Please try again.", "error")
             return redirect(url_for('signin'))
 
     return render_template('signin.html')
@@ -58,6 +58,7 @@ def signup():
         if(flag):
             return redirect(url_for('signin'))
         else:
+            flash("This email is already registered..please use different one", "error")
             return redirect(url_for('signup'))
 
     return render_template('signup.html')
