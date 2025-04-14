@@ -262,6 +262,45 @@ def my_orders():
 def about():
     return render_template('about.html')
 
+@app.route('/add_restaurant', methods=['GET', 'POST'])
+@login_required
+def add_restaurant():
+    if session.get('Role') != 'RestaurantOwner':
+        return redirect(url_for('dashboard'))
+
+    if request.method == 'POST':
+        name = request.form['name']
+        address = request.form['address']
+        phone = request.form['phone']
+        hours = request.form['hours']
+        owner_id = session['UserID']
+
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+
+        # Step 1: Insert into Restaurants
+        cursor.execute("""
+            INSERT INTO Restaurants (OwnerID, Name, Address, PhoneNumber, OpeningHours)
+            VALUES (?, ?, ?, ?, ?)
+        """, (owner_id, name, address, phone, hours))
+        conn.commit()
+
+        # Step 2: Get the newly created restaurant ID
+        restaurant_id = cursor.lastrowid
+
+        # Step 3: Insert a default review
+        cursor.execute("""
+            INSERT INTO Reviews (UserID, RestaurantID, Rating, Comment)
+            VALUES (?, ?, ?, ?)
+        """, (owner_id, restaurant_id, 5, 'Newly listed! Be the first to review.'))
+        conn.commit()
+
+        conn.close()
+        return redirect(url_for('restaurants'))
+
+    return render_template('add_restaurant.html')
+
+
 @app.route('/logout')
 @login_required
 def logout():

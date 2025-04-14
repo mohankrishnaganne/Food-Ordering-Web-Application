@@ -51,6 +51,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
                 </li>
+                {% if session.get('Role') == 'RestaurantOwner' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('add_restaurant') }}">Add Restaurant</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about') }}">About</a>
                 </li>

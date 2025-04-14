@@ -70,6 +70,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('my_orders') }}">View Orders</a>
                 </li>
+                {% if session.get('Role') == 'RestaurantOwner' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('add_restaurant') }}">Add Restaurant</a>
+                </li>
+                {% endif %}
+
             </ul>
             <ul class="navbar-nav">
                 {% if session.get('UserID') %}
