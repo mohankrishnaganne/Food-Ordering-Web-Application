@@ -41,3 +41,7 @@ def get_restaurants():
     conn.close()
     return restaurants # Return the list of restaurants
 
+
+
+
+

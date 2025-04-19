@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Menu Items</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            margin-top: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .form-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-table th {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            font-size: 0.9rem;
+            padding: 4px 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (you can copy from base.html or reuse layout) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About</a></li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if session.get('UserID') %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Manage Menu for {{ restaurant['name'] }}</h2>
+
+        <!-- Add Menu Item Form -->
+        <div class="form-section mb-4">
+            <form method="POST" action="{{ url_for('add_menu_item', restaurant_id=restaurant['restaurantid']) }}">
+                <div class="form-group">
+                    <label for="item_name">Item Name</label>
+                    <input type="text" class="form-control" id="item_name" name="item_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description (optional)</label>
+                    <textarea class="form-control" id="description" name="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price ($)</label>
+                    <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="availability">Availability</label>
+                    <select class="form-control" id="availability" name="availability">
+                        <option value="Available">Available</option>
+                        <option value="Unavailable">Unavailable</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Add Menu Item</button>
+            </form>
+        </div>
+
+        <!-- Current Menu Items -->
+        <div class="table-responsive">
+            <table class="table table-bordered menu-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Price ($)</th>
+                        <th>Status</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in menu_items %}
+                    <tr>
+                        <td>{{ item['ItemName'] }}</td>
+                        <td>{{ item['Description'] or '—' }}</td>
+                        <td>{{ item['Price'] }}</td>
+                        <td>{{ item['AvailabilityStatus'] }}</td>
+                        <td>
+                            <form action="{{ url_for('remove_menu_item', menu_item_id=item['MenuItemID'], restaurant_id=restaurant['restaurantid']) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this item?');">
+                                <button type="submit" class="btn btn-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center">No menu items found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

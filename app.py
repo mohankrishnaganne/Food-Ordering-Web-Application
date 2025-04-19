@@ -300,6 +300,66 @@ def add_restaurant():
 
     return render_template('add_restaurant.html')
 
+@app.route('/restaurant/<int:restaurant_id>/manage_menu', methods=['GET'])
+@login_required
+def manage_menu(restaurant_id):
+    role = session.get('Role')
+    user_id = session.get('UserID')
+
+    # Allow only admins or restaurant owners
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    # Check ownership (only if not admin)
+    if role != 'Admin':
+        cursor.execute("SELECT * FROM Restaurants WHERE RestaurantID=? AND OwnerID=?", (restaurant_id, user_id))
+        if not cursor.fetchone():
+            flash("Unauthorized access", "danger")
+            return redirect(url_for('about'))
+
+    cursor.execute("SELECT * FROM Restaurants WHERE RestaurantID=?", (restaurant_id,))
+    restaurant = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM MenuItems WHERE RestaurantID=?", (restaurant_id,))
+    menu_items = cursor.fetchall()
+    conn.close()
+
+    return render_template("menu_item_management.html", restaurant=restaurant, menu_items=menu_items)
+
+
+@app.route('/restaurant/<int:restaurant_id>/add_menu_item', methods=['POST'])
+@login_required
+def add_menu_item(restaurant_id):
+    item_name = request.form['item_name']
+    description = request.form.get('description', '')
+    price = float(request.form['price'])
+    availability = request.form['availability']
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO MenuItems (RestaurantID, ItemName, Description, Price, AvailabilityStatus)
+        VALUES (?, ?, ?, ?, ?)
+    """, (restaurant_id, item_name, description, price, availability))
+    conn.commit()
+    conn.close()
+
+    flash("Menu item added successfully!", "success")
+    return redirect(url_for('manage_menu', restaurant_id=restaurant_id))
+
+
+@app.route('/restaurant/<int:restaurant_id>/remove_menu_item/<int:menu_item_id>', methods=['POST'])
+@login_required
+def remove_menu_item(restaurant_id, menu_item_id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM MenuItems WHERE MenuItemID = ? AND RestaurantID = ?", (menu_item_id, restaurant_id))
+    conn.commit()
+    conn.close()
+
+    flash("Menu item removed.", "success")
+    return redirect(url_for('manage_menu', restaurant_id=restaurant_id))
 
 @app.route('/logout')
 @login_required
