@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Customer Orders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            margin-top: 40px;
+        }
+
+        h2 {
+            color: #28a745;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            border-left: 5px solid #28a745;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            background-color: #e9f9ee;
+            font-weight: 500;
+        }
+
+        .order-status {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .btn-status {
+            padding: 4px 10px;
+            font-size: 0.9rem;
+        }
+
+        .status-form {
+            display: inline;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About</a></li>
+        </ul>
+        <ul class="navbar-nav">
+            {% if session.get('UserID') %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Customer Orders - {{ restaurant_name }}</h2>
+
+    {% if orders %}
+        {% for order in orders %}
+        <div class="card">
+            <div class="card-header">
+                Order ID: {{ order['OrderID'] }} | Customer: {{ order['CustomerName'] }} | Date: {{ order['OrderDate'] }}
+            </div>
+            <div class="card-body">
+                <p><strong>Items:</strong></p>
+                <ul>
+                    {% for item in order['Items'] %}
+                        <li>{{ item['ItemName'] }} x{{ item['Quantity'] }} — ${{ item['SubTotal'] }}</li>
+                    {% endfor %}
+                </ul>
+                <p><strong>Total:</strong> ${{ order['TotalPrice'] }}</p>
+                <p><strong>Status:</strong> <span class="order-status">{{ order['OrderStatus'] }}</span></p>
+
+                {% if order['OrderStatus'] != 'Delivered' %}
+                <form method="POST" class="status-form" action="{{ url_for('update_order_status', order_id=order['OrderID']) }}">
+                    <input type="hidden" name="current_status" value="{{ order['OrderStatus'] }}">
+                    <button type="submit" class="btn btn-primary btn-status">Mark as {{ 'Preparing' if order['OrderStatus'] == 'Pending' else 'Delivered' }}</button>
+                </form>
+                {% else %}
+                <span class="text-success">✔ Delivered</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-orders">
+            <h5>No orders placed yet.</h5>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

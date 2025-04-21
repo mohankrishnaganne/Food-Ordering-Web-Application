@@ -32,16 +32,31 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
+                {% if (session.get('Role') == 'Admin' or session.get('Role') == 'User') %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('my_orders') }}">View Orders</a>
                 </li>
-                {% if session.get('Role') == 'RestaurantOwner' %}
+                {% endif %}
+                {% if (session.get('Role') == 'Admin' or session.get('Role') == 'RestaurantOwner') and session.get('RestaurantID') == 'None' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('add_restaurant') }}">Add Restaurant</a>
                 </li>
+                {% endif %}
+                {% if session.get('Role') == 'RestaurantOwner' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('manage_orders', restaurant_id=session.get('RestaurantID')) }}">Manage Orders</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('manage_menu',restaurant_id=session.get('RestaurantID')) }}">Manage Menu</a>
+                </li> 
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('restaurant_details',restaurant_id=session.get('RestaurantID')) }}">Restaurant Details</a>
+                </li> 
                 {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about') }}">About</a>

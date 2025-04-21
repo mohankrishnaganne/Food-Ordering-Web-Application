@@ -54,7 +54,7 @@
                     <a class="nav-link" href="{{ url_for('my_orders') }}">View Orders</a>
                 </li>
                 
-                {% if session.get('Role') == 'RestaurantOwner' %}
+                {% if session.get('Role') == 'Admin' %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('add_restaurant') }}">Add Restaurant</a>
                 </li>

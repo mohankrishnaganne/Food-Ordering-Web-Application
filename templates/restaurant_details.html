@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Restaurant Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            margin-top: 40px;
+            max-width: 800px;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            background-color: #28a745;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-body p {
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .summary-box {
+            background-color: #e9f9ee;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .btn-manage {
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About</a></li>
+        </ul>
+        <ul class="navbar-nav">
+            {% if session.get('UserID') %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            {{ restaurant['name'] }}
+        </div>
+        <div class="card-body">
+            <p><strong>📍 Address:</strong> {{ restaurant['address'] }}</p>
+            <p><strong>📞 Phone:</strong> {{ restaurant['PhoneNumber'] }}</p>
+            <p><strong>🕒 Opening Hours:</strong> {{ restaurant['OpeningHours'] }}</p>
+            <p><strong>⭐ Average Rating:</strong> {{ restaurant['avg_rating'] }}/5</p>
+
+            <div class="summary-box">
+                <p><strong>Total Menu Items:</strong> {{ menu_count }}</p>
+                <p><strong>Latest Review:</strong> "{{ latest_review }}"</p>
+            </div>
+
+            <a href="{{ url_for('manage_menu', restaurant_id=restaurant['RestaurantID']) }}" class="btn btn-success btn-manage">Manage Menu</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

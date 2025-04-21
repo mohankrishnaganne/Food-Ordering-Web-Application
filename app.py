@@ -36,14 +36,32 @@ def signin():
         user = validate_user(email, password)
 
         if user:
-            session['UserID'] = user[0]  # Assuming user[0] is UserID
-            session['Role'] = user[4]    # Optional: to store role
+            session['UserID'] = user[0]     # Assuming user[0] is UserID
+            session['Role'] = user[4]       # Assuming user[4] is Role
+            session['RestaurantID'] = None  # Initialize RestaurantID in session
+            # If role is RestaurantOwner, check if they already have a restaurant
+            if user[4] == 'RestaurantOwner':
+                conn = sqlite3.connect('database.db')
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+
+                cursor.execute("SELECT RestaurantID FROM Restaurants WHERE OwnerID = ?", (user[0],))
+                restaurant = cursor.fetchone()
+                conn.close()
+
+                if restaurant:
+                    session['RestaurantID'] = restaurant['RestaurantID']
+                    return redirect(url_for('restaurant_details', restaurant_id=restaurant['RestaurantID']))
+                else:
+                    return redirect(url_for('add_restaurant'))
+
             return redirect(url_for('about'))
+
         else:
-            flash("Invalid email or password. Please try again.", "error")
             return redirect(url_for('signin'))
 
     return render_template('signin.html')
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -187,7 +205,7 @@ def place_order():
     cursor.execute("""
         INSERT INTO Orders (UserID, RestaurantID, OrderStatus, TotalPrice) 
         VALUES (?, ?, ?, ?)
-    """, (user_id, restaurant_id, 'Delivered', total_price))
+    """, (user_id, restaurant_id, 'Pending', total_price))
     conn.commit()
     
     # Get the last inserted OrderID
@@ -288,6 +306,9 @@ def add_restaurant():
         # Step 2: Get the newly created restaurant ID
         restaurant_id = cursor.lastrowid
 
+        # ✅ Store the RestaurantID in session
+        session['RestaurantID'] = restaurant_id
+
         # Step 3: Insert a default review
         cursor.execute("""
             INSERT INTO Reviews (UserID, RestaurantID, Rating, Comment)
@@ -296,9 +317,12 @@ def add_restaurant():
         conn.commit()
 
         conn.close()
-        return redirect(url_for('restaurants'))
+
+        # Optional: Redirect to restaurant details or menu management
+        return redirect(url_for('restaurant_details', restaurant_id=restaurant_id))
 
     return render_template('add_restaurant.html')
+
 
 @app.route('/restaurant/<int:restaurant_id>/manage_menu', methods=['GET'])
 @login_required
@@ -360,6 +384,118 @@ def remove_menu_item(restaurant_id, menu_item_id):
 
     flash("Menu item removed.", "success")
     return redirect(url_for('manage_menu', restaurant_id=restaurant_id))
+
+@app.route('/restaurant/<int:restaurant_id>/details')
+@login_required
+def restaurant_details(restaurant_id):
+    user_id = session.get('UserID')
+    role = session.get('Role')
+
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    # Allow only if owner or admin
+    if role != 'Admin':
+        cursor.execute("SELECT * FROM Restaurants WHERE RestaurantID = ? AND OwnerID = ?", (restaurant_id, user_id))
+    else:
+        cursor.execute("SELECT * FROM Restaurants WHERE RestaurantID = ?", (restaurant_id,))
+    restaurant = cursor.fetchone()
+
+    if not restaurant:
+        flash("Unauthorized or restaurant not found.", "danger")
+        return redirect(url_for('about'))
+
+    # Get additional info
+    cursor.execute("SELECT COUNT(*) FROM MenuItems WHERE RestaurantID = ?", (restaurant_id,))
+    menu_count = cursor.fetchone()[0]
+
+    cursor.execute("SELECT ROUND(AVG(Rating), 1) FROM Reviews WHERE RestaurantID = ?", (restaurant_id,))
+    avg_rating = cursor.fetchone()[0] or 0.0
+
+    cursor.execute("SELECT Comment FROM Reviews WHERE RestaurantID = ? ORDER BY ReviewDate DESC LIMIT 1", (restaurant_id,))
+    latest_review_row = cursor.fetchone()
+    latest_review = latest_review_row['Comment'] if latest_review_row else "No reviews yet."
+
+    conn.close()
+
+    return render_template("restaurant_details.html", restaurant=restaurant, menu_count=menu_count, avg_rating=avg_rating, latest_review=latest_review)
+
+@app.route('/restaurant/<int:restaurant_id>/manage_orders')
+@login_required
+def manage_orders(restaurant_id):
+    user_id = session.get('UserID')
+    role = session.get('Role')
+
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    # Verify access: Admins can see all, owners only their own restaurant
+    if role != 'Admin':
+        cursor.execute("SELECT * FROM Restaurants WHERE RestaurantID = ? AND OwnerID = ?", (restaurant_id, user_id))
+        if not cursor.fetchone():
+            flash("Unauthorized access to manage orders.", "danger")
+            return redirect(url_for('about'))
+
+    # Get restaurant name
+    cursor.execute("SELECT Name FROM Restaurants WHERE RestaurantID = ?", (restaurant_id,))
+    restaurant_row = cursor.fetchone()
+    if not restaurant_row:
+        flash("Restaurant not found.", "danger")
+        return redirect(url_for('about'))
+
+    restaurant_name = restaurant_row['Name']
+
+    # Get all orders for this restaurant
+    cursor.execute("""
+        SELECT o.OrderID, o.UserID, o.OrderStatus, o.OrderDate, o.TotalPrice, u.FullName as CustomerName
+        FROM Orders o
+        JOIN Users u ON o.UserID = u.UserID
+        WHERE o.RestaurantID = ?
+        ORDER BY o.OrderDate DESC
+    """, (restaurant_id,))
+    order_rows = cursor.fetchall()
+
+    # Build order list with their items
+    orders = []
+    for order in order_rows:
+        cursor.execute("""
+            SELECT m.ItemName, d.Quantity, d.SubTotal
+            FROM OrderDetails d
+            JOIN MenuItems m ON d.MenuItemID = m.MenuItemID
+            WHERE d.OrderID = ?
+        """, (order['OrderID'],))
+        items = cursor.fetchall()
+
+        orders.append({
+            'OrderID': order['OrderID'],
+            'CustomerName': order['CustomerName'],
+            'OrderDate': order['OrderDate'],
+            'OrderStatus': order['OrderStatus'],
+            'TotalPrice': order['TotalPrice'],
+            'Items': items
+        })
+
+    conn.close()
+    return render_template('manage_orders.html', restaurant_name=restaurant_name, orders=orders)
+
+
+@app.route('/update_order_status/<int:order_id>', methods=['POST'])
+@login_required
+def update_order_status(order_id):
+    current_status = request.form['current_status']
+    next_status = 'Preparing' if current_status == 'Pending' else 'Delivered'
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute("UPDATE Orders SET OrderStatus = ? WHERE OrderID = ?", (next_status, order_id))
+    conn.commit()
+    conn.close()
+
+    flash(f"Order #{order_id} updated to {next_status}.", "success")
+    return redirect(request.referrer or url_for('about'))
+
 
 @app.route('/logout')
 @login_required
