@@ -32,7 +32,10 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
-                {% if (session.get('Role') == 'Admin' or session.get('Role') == 'User') %}
+                {% if (session.get('Role') == 'Admin' or session.get('Role') == 'Customer') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
                 </li>
@@ -61,6 +64,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about') }}">About</a>
                 </li>
+
             </ul>
             <ul class="navbar-nav">
                 {% if session.get('UserID') %}

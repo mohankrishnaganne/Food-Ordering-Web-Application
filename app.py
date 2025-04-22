@@ -277,6 +277,7 @@ def my_orders():
     return render_template('my_orders.html', orders=orders)
 
 @app.route('/about')
+@login_required
 def about():
     return render_template('about.html')
 

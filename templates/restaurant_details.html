@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>My Restaurant Details</title>
@@ -18,7 +19,7 @@
 
         .card {
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
         .card-header {
@@ -48,43 +49,93 @@
         }
     </style>
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About</a></li>
-        </ul>
-        <ul class="navbar-nav">
-            {% if session.get('UserID') %}
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
-            {% endif %}
-        </ul>
-    </div>
-</nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('about') }}">Foodie</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            {{ restaurant['name'] }}
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                {% if (session.get('Role') == 'Admin' or session.get('Role') == 'Customer') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('restaurants') }}">Restaurants</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('my_orders') }}">View Orders</a>
+                </li>
+                {% endif %}
+                {% if (session.get('Role') == 'Admin' or session.get('Role') == 'RestaurantOwner') and
+                session.get('RestaurantID') == 'None' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('add_restaurant') }}">Add Restaurant</a>
+                </li>
+                {% endif %}
+                {% if session.get('Role') == 'RestaurantOwner' %}
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="{{ url_for('manage_orders', restaurant_id=session.get('RestaurantID')) }}">Manage
+                        Orders</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="{{ url_for('manage_menu',restaurant_id=session.get('RestaurantID')) }}">Manage Menu</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="{{ url_for('restaurant_details',restaurant_id=session.get('RestaurantID')) }}">Restaurant
+                        Details</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                </li>
+
+            </ul>
+            <ul class="navbar-nav">
+                {% if session.get('UserID') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('signin') }}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
         </div>
-        <div class="card-body">
-            <p><strong>📍 Address:</strong> {{ restaurant['address'] }}</p>
-            <p><strong>📞 Phone:</strong> {{ restaurant['PhoneNumber'] }}</p>
-            <p><strong>🕒 Opening Hours:</strong> {{ restaurant['OpeningHours'] }}</p>
-            <p><strong>⭐ Average Rating:</strong> {{ restaurant['avg_rating'] }}/5</p>
+    </nav>
 
-            <div class="summary-box">
-                <p><strong>Total Menu Items:</strong> {{ menu_count }}</p>
-                <p><strong>Latest Review:</strong> "{{ latest_review }}"</p>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                {{ restaurant['name'] }}
             </div>
+            <div class="card-body">
+                <p><strong>📍 Address:</strong> {{ restaurant['address'] }}</p>
+                <p><strong>📞 Phone:</strong> {{ restaurant['PhoneNumber'] }}</p>
+                <p><strong>🕒 Opening Hours:</strong> {{ restaurant['OpeningHours'] }}</p>
+                <p><strong>⭐ Average Rating:</strong> {{ restaurant['avg_rating'] }}/5</p>
 
-            <a href="{{ url_for('manage_menu', restaurant_id=restaurant['RestaurantID']) }}" class="btn btn-success btn-manage">Manage Menu</a>
+                <div class="summary-box">
+                    <p><strong>Total Menu Items:</strong> {{ menu_count }}</p>
+                    <p><strong>Latest Review:</strong> "{{ latest_review }}"</p>
+                </div>
+
+                <a href="{{ url_for('manage_menu', restaurant_id=restaurant['RestaurantID']) }}"
+                    class="btn btn-success btn-manage">Manage Menu</a>
+            </div>
         </div>
     </div>
-</div>
 
 </body>
+
 </html>
